@@ -24,7 +24,7 @@ func (s *Server) withAuth(c *gin.Context) {
         return
     }
 
-    login, err := s.auth.Extract(s.ctx, token)
+    userID, err := s.auth.Extract(s.ctx, token)
 
     if err != nil  {
         c.JSON(http.StatusBadRequest, gin.H{"error": "failed to extract data from token"})
@@ -32,7 +32,7 @@ func (s *Server) withAuth(c *gin.Context) {
         return
     }
 
-    c.Set("login", login)
+    c.Set("userID", userID)
 
     c.Next()
 }

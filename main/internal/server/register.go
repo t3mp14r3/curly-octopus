@@ -49,14 +49,14 @@ func (s *Server) register(c *gin.Context) {
         Password: string(bytes),
     }
 
-    err = s.repo.CreateUser(s.ctx, newUser)
+    user, err := s.repo.CreateUser(s.ctx, newUser)
     
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create new user record"})
         return
     }
 
-    token, err := s.auth.Generate(s.ctx, input.Login)
+    token, err := s.auth.Generate(s.ctx, user.ID)
     
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate the token"})

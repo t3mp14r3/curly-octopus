@@ -8,10 +8,10 @@ import (
 )
 
 func (s *Server) ping(c *gin.Context) {
-    loginAny, _ := c.Get("login")
-    login := fmt.Sprint(loginAny)
+    userIDAny, _ := c.Get("userID")
+    userID := fmt.Sprint(userIDAny)
 
-    user, err := s.repo.GetUserByLogin(s.ctx, login)
+    user, err := s.repo.GetUser(s.ctx, userID)
 
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})

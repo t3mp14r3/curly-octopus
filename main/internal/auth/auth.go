@@ -29,7 +29,7 @@ func New(authConfig *config.AuthConfig, logger *zap.Logger) *Auth {
     }
 }
 
-func (a *Auth) Generate(ctx context.Context, login string) (string, error) {
+func (a *Auth) Generate(ctx context.Context, userID string) (string, error) {
     u, err := url.Parse(a.addr)
     
     if err != nil {
@@ -39,7 +39,7 @@ func (a *Auth) Generate(ctx context.Context, login string) (string, error) {
 
     u.Path = "/generate"
     q := u.Query()
-    q.Add("login", login)
+    q.Add("login", userID)
     u.RawQuery = q.Encode()
 
     path := u.String()
@@ -63,7 +63,7 @@ func (a *Auth) Generate(ctx context.Context, login string) (string, error) {
     defer resp.Body.Close()
 
     if resp.StatusCode == http.StatusBadRequest {
-        a.logger.Error("request failed - bad request", zap.Error(err))
+        a.logger.Error("request failed - bad request")
         return "", errors.New("response status: bad request")
     }
 

@@ -39,7 +39,7 @@ func (s *Server) login(c *gin.Context) {
         return
     }
 
-    token, err := s.auth.Generate(s.ctx, input.Login)
+    token, err := s.auth.Generate(s.ctx, user.ID)
     
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate the token"})

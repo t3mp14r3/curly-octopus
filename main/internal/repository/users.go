@@ -3,22 +3,22 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/t3mp14r3/curly-octopus/main/internal/domain"
 	"go.uber.org/zap"
 )
 
-func (r *RepoClient) CreateUser(ctx context.Context, user domain.User) error {
-    query := `INSERT INTO users(login, email, password, name) VALUES($1, $2, $3, $4);`
+func (r *RepoClient) CreateUser(ctx context.Context, user domain.User) (*domain.User, error) {
+    query := `INSERT INTO users(login, email, password, name) VALUES($1, $2, $3, $4) RETURNING id, login, email, password, name;`
 
-    _, err := r.db.ExecContext(ctx, query, user.Login, user.Email, user.Password, user.Name)
+    var result domain.User
+    err := r.db.GetContext(ctx, &result, query, user.Login, user.Email, user.Password, user.Name)
 
     if err != nil {
         r.logger.Error("failed to create new user record", zap.Error(err))
     }
 
-    return err
+    return &result, err
 }
 
 func (r *RepoClient) EmailUsed(ctx context.Context, email string) bool {
@@ -61,13 +61,23 @@ func (r *RepoClient) GetUserByLogin(ctx context.Context, login string) (*domain.
     var user domain.User
     err := r.db.GetContext(ctx, &user, query, login)
 
-    if err != nil && err != sql.ErrNoRows {
+    if err != nil {
         r.logger.Error("failed to get user record by login", zap.Error(err))
         return nil, err
     }
 
-    if err == sql.ErrNoRows {
-        return nil, errors.New("user not found")
+    return &user, nil
+}
+
+func (r *RepoClient) GetUser(ctx context.Context, userID string) (*domain.User, error) {
+    query := `SELECT id, login, email, password, name FROM users WHERE id = $1;`
+
+    var user domain.User
+    err := r.db.GetContext(ctx, &user, query, userID)
+
+    if err != nil {
+        r.logger.Error("failed to get user record", zap.Error(err))
+        return nil, err
     }
 
     return &user, nil
