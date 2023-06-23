@@ -9,6 +9,7 @@ import (
 type Config struct {
     PostgresConfig      PostgresConfig
     ServerConfig        ServerConfig
+    AuthConfig          AuthConfig
 }
 
 type PostgresConfig struct {
@@ -23,6 +24,10 @@ type ServerConfig struct {
     Addr        string `env:"SERVER_ADDR"`
 }
 
+type AuthConfig struct {
+    Addr        string `env:"AUTH_ADDR"`
+}
+
 func New() *Config {
     var config Config
 
@@ -32,6 +37,10 @@ func New() *Config {
 	
     if err := env.Parse(&config.ServerConfig); err != nil {
         log.Fatalf("failed to parse server config: %v", err)
+	}
+    
+    if err := env.Parse(&config.AuthConfig); err != nil {
+        log.Fatalf("failed to parse auth config: %v", err)
 	}
 
 	return &config

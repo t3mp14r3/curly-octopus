@@ -7,6 +7,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/t3mp14r3/curly-octopus/main/internal/auth"
 	"github.com/t3mp14r3/curly-octopus/main/internal/config"
 	"github.com/t3mp14r3/curly-octopus/main/internal/logger"
 	"github.com/t3mp14r3/curly-octopus/main/internal/repository"
@@ -22,11 +23,13 @@ func main() {
 
     repo := repository.New(&config.PostgresConfig, logger)
     defer repo.Close()
+    
+    auth := auth.New(&config.AuthConfig, logger)
 
-    server := server.New(&config.ServerConfig, repo, logger)
+    server := server.New(&config.ServerConfig, repo, auth, logger)
 
     wg := &sync.WaitGroup{}
-    
+
     wg.Add(1)
     go func() {
         defer wg.Done()

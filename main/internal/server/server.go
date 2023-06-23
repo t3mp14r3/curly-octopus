@@ -9,19 +9,22 @@ import (
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/t3mp14r3/curly-octopus/main/internal/auth"
 	"github.com/t3mp14r3/curly-octopus/main/internal/config"
 	"github.com/t3mp14r3/curly-octopus/main/internal/repository"
 	"go.uber.org/zap"
 )
 
 type Server struct {
+    ctx     context.Context
     r       *gin.Engine
     addr    string
     logger  *zap.Logger
     repo    *repository.RepoClient
+    auth    *auth.Auth
 }
 
-func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, logger *zap.Logger) *Server {
+func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *auth.Auth, logger *zap.Logger) *Server {
     gin.SetMode(gin.ReleaseMode)
     r := gin.New()
 
@@ -38,14 +41,18 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, logger 
         addr: serverCongig.Addr,
         logger: logger,
         repo: repo,
+        auth: auth,
     }
 
     r.GET("/ping", server.Ping)
+    r.POST("/register", server.Register)
 
     return server
 }
 
 func (s *Server) Run(ctx context.Context) error {
+    s.ctx = ctx
+
     errChan := make(chan error, 1)
 
     wg := &sync.WaitGroup{}

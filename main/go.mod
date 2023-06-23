@@ -6,6 +6,7 @@ require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/gin-contrib/zap v0.1.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.11.2

@@ -22,6 +22,18 @@ services:
       - octopus-postgres-volume:/var/lib/postgresql/data
     networks:
       - octopus-network
+  
+  octopus-auth:
+    image: andrianovartemii/gm-test-task-auth-generator:amd
+    hostname: octopus-auth
+    container_name: octopus-auth
+    restart: on-failure
+    expose:
+      - 8080
+    networks:
+      - octopus-network
+    environment:
+      AUTH_TOKEN_LIFETIME: 2
 
   octopus-main:
     build: ./main
@@ -37,5 +49,7 @@ services:
       - octopus-network
     depends_on:
       - octopus-postgres
+      - octopus-auth
     links:
       - octopus-postgres
+      - octopus-auth
