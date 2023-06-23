@@ -20,18 +20,27 @@ type Server struct {
 }
 
 type Service struct {
+    logger          *zap.Logger
+    fontPath        string
+    templatePath    string
+    storagePath     string
     gen.UnimplementedChecksServer
 }
 
 func New(config *config.ServerConfig, logger *zap.Logger) *Server {
-    listener, err := net.Listen("tcp", config.Port)
+    listener, err := net.Listen("tcp", config.Addr)
 
     if err != nil {
         log.Fatalf("failed to create new tcp listener: %v", err)
     }
 
     serverRegistar := grpc.NewServer()
-    service := &Service{}
+    service := &Service{
+        logger: logger,
+        fontPath: config.FontPath,
+        templatePath: config.TemplatePath,
+        storagePath: config.StoragePath,
+    }
 
     gen.RegisterChecksServer(serverRegistar, service)
 

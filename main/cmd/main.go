@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/t3mp14r3/curly-octopus/main/internal/auth"
+	"github.com/t3mp14r3/curly-octopus/main/internal/checks"
 	"github.com/t3mp14r3/curly-octopus/main/internal/config"
 	"github.com/t3mp14r3/curly-octopus/main/internal/logger"
 	"github.com/t3mp14r3/curly-octopus/main/internal/repository"
@@ -26,7 +27,9 @@ func main() {
     
     auth := auth.New(&config.AuthConfig, logger)
 
-    server := server.New(&config.ServerConfig, repo, auth, logger)
+    checks := checks.New(&config.ChecksConfig)
+
+    server := server.New(&config.ServerConfig, repo, auth, checks, logger)
 
     wg := &sync.WaitGroup{}
 
@@ -34,12 +37,12 @@ func main() {
     go func() {
         defer wg.Done()
         if err := server.Run(ctx); err != nil {
-            logger.Error("server run error", zap.Error(err))
+            logger.Error("main server run error", zap.Error(err))
             cancel()
         }
     }()
 
-    logger.Info("server started", zap.String("addr", config.ServerConfig.Addr))
+    logger.Info("main server started", zap.String("addr", config.ServerConfig.Addr))
 
     exit := make(chan os.Signal, 1)
 	signal.Notify(exit, syscall.SIGINT, syscall.SIGTERM)

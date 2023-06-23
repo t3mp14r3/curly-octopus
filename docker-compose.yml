@@ -3,6 +3,8 @@ version: '3'
 volumes:
   octopus-postgres-volume:
     name: octopus-postgres-volume
+  octopus-checks-volume:
+    name: octopus-checks-volume
 
 networks:
   octopus-network:
@@ -33,7 +35,8 @@ services:
     networks:
       - octopus-network
     environment:
-      AUTH_TOKEN_LIFETIME: 2
+      AUTH_TOKEN_LIFETIME: 30
+    platform: linux/arm64/v8
 
   octopus-main:
     build: ./main
@@ -50,6 +53,23 @@ services:
     depends_on:
       - octopus-postgres
       - octopus-auth
+      - octopus-checks
     links:
       - octopus-postgres
       - octopus-auth
+      - octopus-checks
+  
+  octopus-checks:
+    build: ./checks
+    image: octopus-checks
+    hostname: octopus-checks
+    container_name: octopus-checks
+    restart: on-failure
+    expose:
+      - 8080
+    env_file:
+      - ./checks/.env
+    volumes: 
+      - octopus-checks-volume:/storage
+    networks:
+      - octopus-network

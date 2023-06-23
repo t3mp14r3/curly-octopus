@@ -27,11 +27,7 @@ func (r *RepoClient) GetUserProducts(ctx context.Context, userID string) ([]*dom
     var products []*domain.Product
     err := r.db.SelectContext(ctx, &products, query, userID)
 
-    if err == sql.ErrNoRows {
-        return nil, nil
-    }
-
-    if err != nil {
+    if err != nil && err != sql.ErrNoRows {
         r.logger.Error("failed to select user products", zap.Error(err))
         return nil, err
     }

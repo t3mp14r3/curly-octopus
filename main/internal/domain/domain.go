@@ -12,7 +12,7 @@ type Product struct {
     ID          string  `json:"id" db:"id"`
     Name        string  `json:"name" db:"name"`
     Desc        string  `json:"desc" db:"desc"`
-    Cost        int     `json:"cost" db:"cost"`
+    Cost        int64   `json:"cost" db:"cost"`
     Barcode     string  `json:"barcode" db:"barcode"`
     UserID      string  `json:"-" db:"user_id"`
 }

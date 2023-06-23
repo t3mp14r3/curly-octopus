@@ -9,6 +9,7 @@ import (
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/t3mp14r3/curly-octopus/checks/gen"
 	"github.com/t3mp14r3/curly-octopus/main/internal/auth"
 	"github.com/t3mp14r3/curly-octopus/main/internal/config"
 	"github.com/t3mp14r3/curly-octopus/main/internal/repository"
@@ -22,9 +23,10 @@ type Server struct {
     logger  *zap.Logger
     repo    *repository.RepoClient
     auth    *auth.Auth
+    checks  gen.ChecksClient
 }
 
-func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *auth.Auth, logger *zap.Logger) *Server {
+func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *auth.Auth, checks *gen.ChecksClient, logger *zap.Logger) *Server {
     gin.SetMode(gin.ReleaseMode)
     r := gin.New()
 
@@ -42,6 +44,7 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *a
         logger: logger,
         repo: repo,
         auth: auth,
+        checks: *checks,
     }
 
     r.POST("/register", server.register)
@@ -55,6 +58,7 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *a
     secure.GET("/products", server.getProducts)
     secure.GET("/products/:id", server.getProduct)
     secure.DELETE("/products/:id", server.deleteProduct)
+    secure.GET("/check/:id", server.check)
 
     return server
 }
@@ -70,7 +74,7 @@ func (s *Server) Run(ctx context.Context) error {
     go func() {
         defer wg.Done()
         if err := s.r.Run(s.addr); err != nil {
-            s.logger.Error("server eror", zap.Error(err))
+            s.logger.Error("main server eror", zap.Error(err))
             errChan <- err
         }
     }()
@@ -79,7 +83,7 @@ func (s *Server) Run(ctx context.Context) error {
 
     select {
         case <-ctx.Done():
-            err = errors.New("server stop via context")
+            err = errors.New("main server stop via context")
         case err = <-errChan:
     }
 

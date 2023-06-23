@@ -32,7 +32,7 @@ func main() {
         }
     }()
 
-    logger.Info("grpc server started", zap.String("port", config.ServerConfig.Port))
+    logger.Info("grpc server started", zap.String("addr", config.ServerConfig.Addr))
 
     exit := make(chan os.Signal, 1)
 	signal.Notify(exit, syscall.SIGINT, syscall.SIGTERM)

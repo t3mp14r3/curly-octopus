@@ -13,11 +13,6 @@ func (s *Server) getProducts(c *gin.Context) {
 
     products, err := s.repo.GetUserProducts(s.ctx, userID)
 
-    if products == nil && err == nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "no products found"})
-        return
-    }
-    
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get user products"})
         return

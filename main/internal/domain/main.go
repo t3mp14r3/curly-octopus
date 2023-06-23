@@ -56,7 +56,7 @@ func (r LoginRequest) Validate() error {
 type CreateProductRequest struct {
     Name        string  `json:"name" db:"name"`
     Desc        string  `json:"desc" db:"desc"`
-    Cost        int     `json:"cost" db:"cost"`
+    Cost        int64   `json:"cost" db:"cost"`
     Barcode     string  `json:"barcode" db:"barcode"`
 }
 

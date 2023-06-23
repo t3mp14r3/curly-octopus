@@ -11,7 +11,10 @@ type Config struct {
 }
 
 type ServerConfig struct {
-    Port            string `env:"SERVER_PORT"`
+    Addr            string `env:"SERVER_ADDR"`
+    FontPath        string `env:"SERVER_FONT_PATH"`
+    TemplatePath    string `env:"SERVER_TEMPLATE_PATH"`
+    StoragePath     string `env:"SERVER_STORAGE_PATH"`
 }
 
 func New() *Config {
