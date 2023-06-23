@@ -7,3 +7,11 @@ type User struct {
     Name        string  `json:"name" db:"name"`
     Email       string  `json:"email" db:"email"`
 }
+
+type Product struct {
+    ID          string  `json:"id" db:"id"`
+    Name        string  `json:"name" db:"name"`
+    Desc        string  `json:"desc" db:"desc"`
+    Cost        int     `json:"cost" db:"cost"`
+    UserID      string  `json:"-" db:"user_id"`
+}

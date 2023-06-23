@@ -50,7 +50,11 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *a
     secure := r.Group("/")
     secure.Use(server.withAuth)
 
-    secure.GET("/ping", server.ping)
+    secure.GET("/me", server.me)
+    secure.POST("/products", server.createProduct)
+    secure.GET("/products", server.getProducts)
+    secure.GET("/products/:id", server.getProduct)
+    secure.DELETE("/products/:id", server.deleteProduct)
 
     return server
 }

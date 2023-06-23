@@ -52,3 +52,21 @@ func (r LoginRequest) Validate() error {
 
     return nil
 }
+
+type CreateProductRequest struct {
+    Name        string  `json:"name" db:"name"`
+    Desc        string  `json:"desc" db:"desc"`
+    Cost        int     `json:"cost" db:"cost"`
+}
+
+func (r CreateProductRequest) Validate() error {
+    if len(r.Name) == 0 {
+        return errors.New("product name is required")
+    }
+    
+    if r.Cost == 0 {
+        return errors.New("cost must be greater than zero")
+    }
+    
+    return nil
+}
