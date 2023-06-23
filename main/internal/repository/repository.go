@@ -14,7 +14,7 @@ import (
 )
 
 type RepoClient struct {
-    pc      *sqlx.DB
+    db      *sqlx.DB
     logger  *zap.Logger
 }
 
@@ -36,7 +36,7 @@ func New(postgresConfig *config.PostgresConfig, logger *zap.Logger) *RepoClient 
     migrate(postgresConn.DB)
 
     return &RepoClient{
-        pc:     postgresConn,
+        db:     postgresConn,
         logger: logger,
     }
 }
@@ -52,7 +52,7 @@ func migrate(db *sql.DB) {
 }
 
 func (r *RepoClient) Close() {
-    if err := r.pc.Close(); err != nil {
+    if err := r.db.Close(); err != nil {
         log.Fatalf("error while closing postgres connection: %v", err)
     }
 }

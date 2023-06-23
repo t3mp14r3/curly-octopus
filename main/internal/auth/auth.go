@@ -141,5 +141,4 @@ func (a *Auth) Extract(ctx context.Context, tokenStr string) (string, error) {
         a.logger.Error("invalid token", zap.Error(err))
         return "", err
     }
-
 }

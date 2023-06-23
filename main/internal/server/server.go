@@ -45,6 +45,7 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *a
     }
 
     r.POST("/register", server.register)
+    r.POST("/login", server.login)
 
     secure := r.Group("/")
     secure.Use(server.withAuth)
