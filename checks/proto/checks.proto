@@ -1,0 +1,18 @@
+syntax = "proto3";
+option go_package = "github.com/t3mp14r3/curly-octopus/checks/gen";
+
+message CreateRequest {
+    string id = 1;
+    string name = 2;
+    string barcode = 3;
+    int64  cost = 4;
+}
+
+message CreateResponse {
+    string filename = 1;
+    bytes  data = 2;
+}
+
+service Checks {
+    rpc Create(CreateRequest) returns (CreateResponse);
+}
