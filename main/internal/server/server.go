@@ -44,8 +44,12 @@ func New(serverCongig *config.ServerConfig, repo *repository.RepoClient, auth *a
         auth: auth,
     }
 
-    r.GET("/ping", server.Ping)
-    r.POST("/register", server.Register)
+    r.POST("/register", server.register)
+
+    secure := r.Group("/")
+    secure.Use(server.withAuth)
+
+    secure.GET("/ping", server.ping)
 
     return server
 }

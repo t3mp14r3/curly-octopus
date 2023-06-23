@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Server) Register(c *gin.Context) {
+func (s *Server) register(c *gin.Context) {
     body := make(map[string]string)
     err := c.BindJSON(&body)
 
