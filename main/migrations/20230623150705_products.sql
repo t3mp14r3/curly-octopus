@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS products (
     name        TEXT NOT NULL,
     "desc"      TEXT NOT NULL DEFAULT '',
     cost        INT NOT NULL DEFAULT 0,
+    barcode     TEXT NOT NULL,
     user_id     UUID NOT NULL,
     created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()::TIMESTAMP
 );

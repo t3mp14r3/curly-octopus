@@ -57,6 +57,7 @@ type CreateProductRequest struct {
     Name        string  `json:"name" db:"name"`
     Desc        string  `json:"desc" db:"desc"`
     Cost        int     `json:"cost" db:"cost"`
+    Barcode     string  `json:"barcode" db:"barcode"`
 }
 
 func (r CreateProductRequest) Validate() error {
@@ -66,6 +67,10 @@ func (r CreateProductRequest) Validate() error {
     
     if r.Cost == 0 {
         return errors.New("cost must be greater than zero")
+    }
+    
+    if len(r.Barcode) == 0 {
+        return errors.New("product barcode is required")
     }
     
     return nil

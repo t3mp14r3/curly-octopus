@@ -31,6 +31,7 @@ func (s *Server) createProduct(c *gin.Context) {
         Name: input.Name,
         Desc: input.Desc,
         Cost: input.Cost,
+        Barcode: input.Barcode,
         UserID: userID,
     }
 

@@ -9,10 +9,10 @@ import (
 )
 
 func (r *RepoClient) CreateProduct(ctx context.Context, product domain.Product) (*domain.Product, error) {
-    query := `INSERT INTO products(name, "desc", cost, user_id) VALUES($1, $2, $3, $4) RETURNING id, name, "desc", cost;`
+    query := `INSERT INTO products(name, "desc", cost, barcode, user_id) VALUES($1, $2, $3, $4, $5) RETURNING id, name, "desc", barcode, cost;`
 
     var result domain.Product
-    err := r.db.GetContext(ctx, &result, query, product.Name, product.Desc, product.Cost, product.UserID)
+    err := r.db.GetContext(ctx, &result, query, product.Name, product.Desc, product.Cost, product.Barcode, product.UserID)
 
     if err != nil {
         r.logger.Error("failed to create new product record", zap.Error(err))
@@ -22,7 +22,7 @@ func (r *RepoClient) CreateProduct(ctx context.Context, product domain.Product) 
 }
 
 func (r *RepoClient) GetUserProducts(ctx context.Context, userID string) ([]*domain.Product, error) {
-    query := `SELECT id, name, "desc", cost FROM products WHERE user_id = $1;`
+    query := `SELECT id, name, "desc", barcode, cost FROM products WHERE user_id = $1;`
 
     var products []*domain.Product
     err := r.db.SelectContext(ctx, &products, query, userID)
@@ -40,7 +40,7 @@ func (r *RepoClient) GetUserProducts(ctx context.Context, userID string) ([]*dom
 }
 
 func (r *RepoClient) GetProduct(ctx context.Context, productID string) (*domain.Product, error) {
-    query := `SELECT id, name, "desc", cost, user_id FROM products WHERE id = $1;`
+    query := `SELECT id, name, "desc", cost, barcode, user_id FROM products WHERE id = $1;`
 
     var product domain.Product
     err := r.db.GetContext(ctx, &product, query, productID)
