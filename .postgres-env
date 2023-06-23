@@ -1,0 +1,3 @@
+POSTGRES_PASSWORD=octopus
+POSTGRES_USER=octopus
+POSTGRES_DB=octopus
