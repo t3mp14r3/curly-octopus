@@ -1,0 +1,75 @@
+version: '3'
+
+volumes:
+  octopus-postgres-volume:
+    name: octopus-postgres-volume
+  octopus-checks-volume:
+    name: octopus-checks-volume
+
+networks:
+  octopus-network:
+    name: octopus-network
+
+services:
+  octopus-postgres:
+    image: postgres:15.3-alpine
+    hostname: octopus-postgres
+    container_name: octopus-postgres
+    restart: on-failure
+    expose:
+      - 5432
+    env_file:
+      - .postgres-env
+    volumes: 
+      - octopus-postgres-volume:/var/lib/postgresql/data
+    networks:
+      - octopus-network
+  
+  octopus-auth:
+    image: andrianovartemii/gm-test-task-auth-generator:amd
+    hostname: octopus-auth
+    container_name: octopus-auth
+    restart: on-failure
+    expose:
+      - 8080
+    networks:
+      - octopus-network
+    environment:
+      AUTH_TOKEN_LIFETIME: 30
+    platform: linux/arm64/v8
+
+  octopus-main:
+    build: ./main
+    image: octopus-main
+    hostname: octopus-main
+    container_name: octopus-main
+    restart: on-failure
+    env_file:
+      - ./main/.env
+    ports:
+      - 5000:5000
+    networks:
+      - octopus-network
+    depends_on:
+      - octopus-postgres
+      - octopus-auth
+      - octopus-checks
+    links:
+      - octopus-postgres
+      - octopus-auth
+      - octopus-checks
+  
+  octopus-checks:
+    build: ./checks
+    image: octopus-checks
+    hostname: octopus-checks
+    container_name: octopus-checks
+    restart: on-failure
+    expose:
+      - 8080
+    env_file:
+      - ./checks/.env
+    volumes: 
+      - octopus-checks-volume:/storage
+    networks:
+      - octopus-network
